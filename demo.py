@@ -9,13 +9,14 @@ import time
 from pathlib import Path
 from typing import List, Iterable, Optional, Tuple
 
+os.environ.setdefault("GRADIO_TEMP_DIR", "/workspace/inputs/gradio-temp")
+
 import gradio as gr
 import requests
 from torch import Tensor
 from tqdm import tqdm
 
 os.environ["XFORMERS_IGNORE_FLASH_VERSION_CHECK"] = "1"
-gr.TEMP_DIR = "tmp_gradio"
 
 from src.data.dataset import DatasetConfig, RigDatasetModule
 from src.data.transform import Transform
@@ -30,7 +31,7 @@ from src.server.spec import (
 from src.data.vertex_group import voxel_skin
 
 MODEL_CKPTS = [
-    "experiments/articulation_xl_quantization_256_token_4/grpo_1400.ckpt",
+    "models/experiments/articulation_xl_quantization_256_token_4/grpo_1400.ckpt",
 ]
 
 HF_PATHS = [
@@ -313,7 +314,7 @@ def run_gradio(
     if not files:
         return "Please upload at least one 3D model.", None
 
-    tmp_out = Path(tempfile.mkdtemp(prefix="tokenrig_"))
+    tmp_out = Path(tempfile.mkdtemp(prefix="tokenrig_", dir="/workspace/outputs"))
     filepaths = [Path(f.name) for f in files]
     global TOT
     outputs = []
@@ -406,7 +407,7 @@ def launch_gradio():
             outputs=[log, output],
         )
 
-    demo.launch(server_port=1024)
+    demo.launch(server_name="0.0.0.0", server_port=7860)
 
 def wait_for_bpy_server(timeout=30):
     t0 = time.time()

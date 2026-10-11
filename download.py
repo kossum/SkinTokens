@@ -8,6 +8,7 @@ MODELS = [
     "experiments/skin_vae_2_10_32768/last.ckpt",
     "experiments/articulation_xl_quantization_256_token_4/grpo_1400.ckpt",
 ]
+MODEL_LOCAL_DIR = "models"
 
 DATASETS = [
     "rignet.zip",
@@ -22,7 +23,7 @@ def download_model(name: str):
     local_path = hf_hub_download(
         repo_id=REPO_ID,
         filename=name,
-        local_dir=".",
+        local_dir=MODEL_LOCAL_DIR,
     )
     print(f"[MODEL] {name} downloaded to: {local_path}")
 

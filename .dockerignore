@@ -1,0 +1,6 @@
+# Keep the local Git metadata out of the image build context.
+.git
+**/.git
+.venv
+**/__pycache__
+**/*.py[cod]

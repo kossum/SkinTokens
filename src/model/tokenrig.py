@@ -77,7 +77,10 @@ class TokenRig(ModelSpec):
         self.skin_warmup_start_epoch: int = cfg.get('skin_warmup_start_epoch', 0)
         self.skin_warmup_end_epoch: int = cfg.get('skin_warmup_end_epoch', -1)
 
-        self.vae = SkinVAEModel.load_from_system_checkpoint(cfg['pretrained_vae']).to(torch.bfloat16)
+        vae_checkpoint = Path(cfg['pretrained_vae'])
+        if not vae_checkpoint.exists() and (Path("models") / vae_checkpoint).exists():
+            vae_checkpoint = Path("models") / vae_checkpoint
+        self.vae = SkinVAEModel.load_from_system_checkpoint(str(vae_checkpoint)).to(torch.bfloat16)
         for param in self.vae.parameters():
             param.requires_grad_(False)
         self.vae.eval()
